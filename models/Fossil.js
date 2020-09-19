@@ -16,7 +16,7 @@ const FossilSchema = new Schema({
         type: Number
     },
     museumPhrase: {
-        type: Text
+        type: String
     },
     image: {
         type: String

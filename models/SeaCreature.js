@@ -35,10 +35,10 @@ const SeaCreatureSchema = new Schema({
         type: String
     },
     catchPhrase: {
-        type: Text
+        type: String
     },
     museumPhrase: {
-        type: Text
+        type: String
     }
 })
 

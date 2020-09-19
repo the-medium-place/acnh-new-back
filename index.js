@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 // var exphbs = require("express-handlebars");
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001;
 
 
 const db = require("./models");
@@ -27,17 +27,34 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/acnh_db", {
 
 //.lean() to make JSON object from Mongoose object
 
-app.get("/", (req,res) => {
-    db.Workout.find({})
-    .populate("exercises").sort({date:-1}).lean() 
-    .then(dbWorkout => {   
-
+app.get("/api/users", (req,res) => {
+    db.User.find({})
+    // .populate("exercises").sort({date:-1}).lean() 
+    .then(dbUser => {   
+        console.log(dbUser);
+        res.send(dbUser)
     })
     .catch(err => {
         res.json(err);
     });
+})
+
+app.get("/", (req, res) => {
+    res.send("API splash!")
+})
+
+
+// TEST USER COLLECTION
+db.User.create({
+    username: 'zgstowel',
+    userEmail: 'zgstowell@gmail.com',
+    islandName: 'Para-Docks',
+    islandHemisphere: 'northern',
+    password: 'password',
 
 })
+
+
 
 // app.post("/api/exercises", ({ body }, res) => {
 //     const newObj = {

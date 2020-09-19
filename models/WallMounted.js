@@ -17,6 +17,21 @@ const WallMountedSchema = new Schema({
     },
     sellPrice: {
         type: Number
+    },
+    tag: {
+        type: String
+    },
+    image: {
+        type: String
+    },
+    size: {
+        type: String
+    },
+    source: {
+        type: String
+    },
+    sourceDetail: {
+        type: String
     }
 
 })
