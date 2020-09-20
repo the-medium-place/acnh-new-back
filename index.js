@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 // var exphbs = require("express-handlebars");
+const cors = require("cors");
 
 const PORT = process.env.PORT || 3001;
 
@@ -25,6 +26,12 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/acnh_db", {
     useFindAndModify: false
 });
 
+// LOCAL DEV LINK
+app.use(cors({
+    origin:["http://localhost:3000"]
+}));
+
+
 //.lean() to make JSON object from Mongoose object
 
 app.get("/api/users", (req,res) => {
@@ -39,20 +46,25 @@ app.get("/api/users", (req,res) => {
     });
 })
 
+app.post("/api/users", ({ body }, res) => {
+    console.log(body)
+    db.User.create(body)
+})
+
 app.get("/", (req, res) => {
     res.send("API splash!")
 })
 
 
 // TEST USER COLLECTION
-db.User.create({
-    username: 'zgstowel',
-    userEmail: 'zgstowell@gmail.com',
-    islandName: 'Para-Docks',
-    islandHemisphere: 'northern',
-    password: 'password',
+// db.User.create({
+//     username: 'zgstowel',
+//     userEmail: 'zgstowell@gmail.com',
+//     islandName: 'Para-Docks',
+//     islandHemisphere: 'northern',
+//     password: 'password',
 
-})
+// })
 
 
 

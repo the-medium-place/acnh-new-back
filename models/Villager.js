@@ -18,9 +18,6 @@ const VillagerSchema = new Schema({
     birthdayString: {
         type: String
     },
-    birthdayDate: {
-        type: String
-    },
     species: {
         type: String
     },
@@ -30,12 +27,21 @@ const VillagerSchema = new Schema({
     catchPhrase: {
         type: String
     },
+    hobby: String,
+
+    bubbleColor: String,
+
+    textColor: String,
+
+    saying: String,  
+      
     icon: {
         type: String
     },
     image: {
         type: String
-    }
+    },
+    apiID: Number
 
 })
 
