@@ -47,7 +47,7 @@ app.get("/api/users", (req,res) => {
 })
 
 app.post("/api/users", ({ body }, res) => {
-    console.log(body)
+    // console.log(body)
     db.User.create(body)
 })
 
