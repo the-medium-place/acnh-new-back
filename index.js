@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const session = require('express-session');
 // var exphbs = require("express-handlebars");
 const cors = require("cors");
+const bcrypt = require('bcrypt')
 
 const PORT = process.env.PORT || 3001;
 
@@ -28,22 +30,33 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/acnh_db", {
 
 // LOCAL DEV LINK
 app.use(cors({
-    origin:["http://localhost:3000"]
+    origin: ["http://localhost:3000"]
 }));
+
+//Set up express-session to save user sessions
+app.use(session({
+    secret: "keyboard cat",
+    resave: true,
+    // add store method here later!!
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 720000
+    }
+}))
 
 
 //.lean() to make JSON object from Mongoose object
 
-app.get("/api/users", (req,res) => {
+app.get("/api/users", (req, res) => {
     db.User.find({})
-    // .populate("exercises").sort({date:-1}).lean() 
-    .then(dbUser => {   
-        console.log(dbUser);
-        res.send(dbUser)
-    })
-    .catch(err => {
-        res.json(err);
-    });
+        // .populate("exercises").sort({date:-1}).lean() 
+        .then(dbUser => {
+            // console.log(dbUser);
+            res.send(dbUser)
+        })
+        .catch(err => {
+            res.json(err);
+        });
 })
 
 app.post("/api/users", ({ body }, res) => {
@@ -53,6 +66,60 @@ app.post("/api/users", ({ body }, res) => {
 
 app.get("/", (req, res) => {
     res.send("API splash!")
+})
+
+app.post("/login", (req, res) => {
+
+    console.log(req.body.username);
+    console.log(req.body.password);
+
+    db.User.findOne({ username: req.body.username })
+        .then(dbUser => {
+            console.log(dbUser);
+            if (dbUser.username === null) {
+                console.log("could not find user");
+                res.status(404).end();
+            }
+            if (bcrypt.compareSync(req.body.password, dbUser.password)) {
+                req.session.username = dbUser.username;
+                req.session.hemisphere = dbUser.islandHemisphere;
+                req.session.islaneName = dbUser.islandName
+                console.log("success");
+                console.log(req.session);
+                // res.redirect('/view-events');
+                res.redirect("/");
+                res.status(200).end();
+            } else {
+                console.log("unsuccess");
+                res.redirect("/search");
+                res.status(404).end();
+                // res.redirect('/');
+            }
+        })
+    // db.User
+    //   .findOne({
+    //     where: {
+    //       username: req.body.username 
+    //     }
+    //   })
+    //   .then((dbUser) => {
+    //     if (dbUser.username === null) {
+    //       console.log("could not find user");
+    //       res.status(404).end();
+    //     }
+    //     if (bcrypt.compareSync(req.body.password, dbUser.password)) {
+    //       req.session.username = dbUser;
+    //       console.log("success");
+    //       // res.redirect('/view-events');
+    //       res.redirect("/view-events");
+    //       res.status(200).end();
+    //     } else {
+    //       console.log("unsuccess");
+    //       res.redirect("/login-fail");
+    //       res.status(404).end();
+    //       // res.redirect('/');
+    //     }
+    //   });
 })
 
 
@@ -91,7 +158,7 @@ app.get("/", (req, res) => {
 // })
 
 // app.put("/api/exercises", (req, res) => {
-  
+
 //     db.Exercise.findOneAndUpdate({_id: req.body._id}, req.body, { new: true })
 // // WORKING HERE RIGHT NOW FIGURE OUT HOW TO UPDAT THE INFO ON THE FOUND INFO
 //     .then(dbExercise => {
