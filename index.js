@@ -70,28 +70,36 @@ app.get("/", (req, res) => {
 
 app.post("/login", (req, res) => {
 
-    console.log(req.body.username);
-    console.log(req.body.password);
+    // console.log(req.body.username);
+    // console.log(req.body.password);
 
     db.User.findOne({ username: req.body.username })
         .then(dbUser => {
             console.log(dbUser);
-            if (dbUser.username === null) {
+            if (!dbUser) {
+                req.session.user = false;
                 console.log("could not find user");
                 res.status(404).end();
             }
             if (bcrypt.compareSync(req.body.password, dbUser.password)) {
-                req.session.username = dbUser.username;
-                req.session.hemisphere = dbUser.islandHemisphere;
-                req.session.islaneName = dbUser.islandName
+                // req.session.username = dbUser.username;
+                // req.session.hemisphere = dbUser.islandHemisphere;
+                // req.session.islaneName = dbUser.islandName
+
+                req.session.user = {
+                    username: dbUser.username,
+                    id: dbUser._id,
+                    islandHemisphere: dbUser.islandHemisphere,
+                    islandName: dbUser.islandName
+                }
                 console.log("success");
                 console.log(req.session);
                 // res.redirect('/view-events');
-                res.redirect("/");
-                res.status(200).end();
+                // res.redirect("/");
+                res.json(req.session).status(200).end();
             } else {
                 console.log("unsuccess");
-                res.redirect("/search");
+                req.sessions.user = false;
                 res.status(404).end();
                 // res.redirect('/');
             }
@@ -122,7 +130,9 @@ app.post("/login", (req, res) => {
     //   });
 })
 
-
+app.get('/readsessions', (req,res) => {
+    res.json(req.session);
+})
 // TEST USER COLLECTION
 // db.User.create({
 //     username: 'zgstowel',
