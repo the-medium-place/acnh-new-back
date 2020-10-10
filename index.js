@@ -157,6 +157,7 @@ app.post("/login", (req, res) => {
         .then(dbUser => {
             // console.log(dbUser);
             if (!dbUser) {
+
                 console.log("could not find user");
                 res.json("username not found").status(404).end();
             }
@@ -231,11 +232,6 @@ app.get("/users/:id", (req, res) => {
         res.status(401).send('not logged in');
     }
 })
-
-
-
-
-
 
 // db.User
 //   .findOne({
