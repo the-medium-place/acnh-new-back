@@ -30,22 +30,37 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/acnh_db", {
 // BEGIN JWT TRIAL
 // ====================================
 // CHECK FOR JWT TOKEN
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorizatioin'];
+// const authenticateToken = (req, res, next) => {
+//     const authHeader = req.headers['authorizatioin'];
 
-    // if the header doesn't eist, token will be undefined
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log(token);
+//     // if the header doesn't eist, token will be undefined
+//     const token = authHeader && authHeader.split(' ')[1];
+//     console.log(token);
 
-    if (!token) return res.status(401).json({ message: 'Invalid token' })
+//     if (!token) return res.status(401).json({ message: 'Invalid token' })
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ message: 'Invalid token' });
-        // valid token
-        req.user = user;
-        next();
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+//         if (err) return res.status(403).json({ message: 'Invalid token' });
+//         // valid token
+//         req.user = user;
+//         next();
+//     })
+// }
+
+const checkAuthStatus = request => {
+    if(!request.headers.authorization) {
+        return false
+    }
+    token = request.headers.authorization.split(' ')[1];
+    // console.log(token);
+    const loggedInUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
+        if (err) return false
+        else return data;
     })
+    // console.log(loggedInUser);
+    return loggedInUser;
 }
+
 
 const generateAccessToken = user => {
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -66,21 +81,21 @@ app.use(cors({
 // app.use(cookieParser());
 
 //Set up express-session to save user sessions
-app.use(session({
-    secret: "keyboard cat",
-    store: new MongoStore({
-        // mongooseConnection: db,
-        port: PORT,
-        collections: 'sessions',
-        url: process.env.MONGODB_URI || "mongodb://localhost/acnh_db"
-    }),
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 2 * 60 * 60 * 1000
-    },
+// app.use(session({
+//     secret: "keyboard cat",
+//     store: new MongoStore({
+//         // mongooseConnection: db,
+//         port: PORT,
+//         collections: 'sessions',
+//         url: process.env.MONGODB_URI || "mongodb://localhost/acnh_db"
+//     }),
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         maxAge: 2 * 60 * 60 * 1000
+//     },
 
-}))
+// }))
 
 // =====================
 // BEGIN ROUTES
@@ -120,6 +135,19 @@ app.get("/readsessions", (req, res) => {
     // db.getCollection('sessions').findOne({}).then(dbSession => res.json(dbSession))
 })
 
+app.post("/userFromToken", (req,res) => {
+    // console.log("req.body: ",req.body.token)
+    const loggedInUser = jwt.verify(req.body.token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
+        if(err) {
+            console.log(err);
+            return false
+        }
+        else {return data}
+    })
+    // console.log(loggedInUser);
+    res.json(loggedInUser);
+})
+
 app.post("/login", (req, res) => {
 
     // console.log(req.body.username);
@@ -127,7 +155,7 @@ app.post("/login", (req, res) => {
 
     db.User.findOne({ username: req.body.username })
         .then(dbUser => {
-            console.log(dbUser);
+            // console.log(dbUser);
             if (!dbUser) {
                 console.log("could not find user");
                 res.json("username not found").status(404).end();
@@ -144,22 +172,11 @@ app.post("/login", (req, res) => {
                 };
 
                 const accessToken = generateAccessToken(user);
-                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-                //
-                //TODO: save refresh tokens in DB
-                console.log("refreshToken: ", refreshToken)
-                console.log("accessToken: ", accessToken)
-                db.User.findOneAndUpdate({ _id: dbUser._id }, { refreshToken: refreshToken }, (err, dbResult) => {
-                    if(err) {
-                        console.log(err);
-                        return res.send(err);
-                    }
-                    // return res.status(200).json(dbResult);
-                    res.end()
-                })
-
+ 
                 // send the JWT to the user
-                res.send({ accessToken, refreshToken })
+                res.status(200).json({ ...user, accessToken });
+
+                // res.send({ accessToken, refreshToken })
 
             } else {
                 console.log("unsuccess");
@@ -186,6 +203,14 @@ app.post('/token', (req, res) => {
     });
 });
 
+app.post('/userFromToken', (req,res) => {
+    const loggedInUser = jwt.verify(req.body.token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
+        if (err) {return false}
+        else {return data};
+    })
+    res.json(loggedInUser);
+})
+
 // remove the access token
 app.delete('/logout', (req, res) => {
     if (!req.body.token) return res.sendStatus(400)
@@ -195,12 +220,19 @@ app.delete('/logout', (req, res) => {
 });
 
 
-app.get("/users/:id", authenticateToken, (req, res) => {
+app.get("/users/:id", (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    if(loggedInUser){
     db.User.findOne({ _id: req.params.id })
         .then(dbUser => {
             res.json(dbUser);
         })
+    } else {
+        res.status(401).send('not logged in');
+    }
 })
+
+
 
 
 
