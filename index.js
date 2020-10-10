@@ -75,10 +75,15 @@ const generateAccessToken = user => {
 
 
 // LOCAL DEV LINK
+// app.use(cors({
+//     origin: ["http://localhost:3000"]
+// }));
+
+// DEPLOYED SITE LINK
 app.use(cors({
-    origin: ["http://localhost:3000"]
-}));
-// app.use(cookieParser());
+    origin: ["https://awesome-acnh-react.herokuapp.com"]
+}))
+
 
 //Set up express-session to save user sessions
 // app.use(session({
