@@ -26,6 +26,19 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/acnh_db", {
     useFindAndModify: false
 });
 
+// LOCAL DEV LINK
+// app.use(cors({
+//     origin: ["http://localhost:3000"]
+// }));
+
+// DEPLOYED SITE LINK
+app.use(cors({
+    origin: ["https://awesome-acnh-react.herokuapp.com"],
+    credentials: true,
+}))
+
+
+
 const checkAuthStatus = request => {
     if(!request.headers.authorization) {
         return false
@@ -50,19 +63,6 @@ const generateAccessToken = user => {
 // =======================================
 // END JWT SETUP
 // =======================================
-
-
-
-// LOCAL DEV LINK
-// app.use(cors({
-//     origin: ["http://localhost:3000"]
-// }));
-
-// DEPLOYED SITE LINK
-app.use(cors({
-    origin: ["https://awesome-acnh-react.herokuapp.com"],
-    credentials: true
-}))
 
 
 // =====================
