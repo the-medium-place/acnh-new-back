@@ -32,9 +32,55 @@ const UserSchema = new Schema({
         type: String,
         trim: true,
         required: "Password"
-    }
-
-   
+    }, 
+    fish: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "Fish"
+      }
+    ],
+    bugs: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "Bug"
+      }
+  ],
+    fossils: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "Fossil"
+      }
+  ],
+    housewares: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "Houseware"
+      }
+  ],
+    misc: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "Misc"
+      }
+  ],
+    seaCreatures: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "SeaCreature"
+      }
+  ],
+    wallMounteds: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "WallMounted"
+      }
+  ],
+    villagers: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "Villager"
+      }
+  ] 
 
 })
 

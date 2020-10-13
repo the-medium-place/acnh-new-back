@@ -10,12 +10,6 @@ const SeaCreatureSchema = new Schema({
     api_id: {
         type: Number
     },
-    user_id: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     northernMonthAvail: {
         type: Array
     },

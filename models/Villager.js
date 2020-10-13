@@ -3,12 +3,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const VillagerSchema = new Schema({
-    user_id: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     name: {
         type: String
     },
@@ -41,7 +35,7 @@ const VillagerSchema = new Schema({
     image: {
         type: String
     },
-    apiID: Number
+    api_id: String
 
 })
 

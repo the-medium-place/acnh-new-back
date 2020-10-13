@@ -10,12 +10,6 @@ const FishSchema = new Schema({
     api_id: {
         type: Number
     },
-    user_id: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     northernMonthAvail: {
         type: Array
     },
@@ -23,7 +17,7 @@ const FishSchema = new Schema({
         type: Array
     },
     timeAvail: {
-        type: Array
+        type: String
     },
     price: {
         type: Number

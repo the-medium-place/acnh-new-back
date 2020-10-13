@@ -3,12 +3,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const FossilSchema = new Schema({
-    user_id: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     name: {
         type: String
     },
@@ -20,7 +14,11 @@ const FossilSchema = new Schema({
     },
     image: {
         type: String
-    }
+    },
+    api_id: {
+        type: String
+    },
+    part_of: String
 
 })
 

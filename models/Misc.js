@@ -3,12 +3,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const MiscSchema = new Schema({
-    user_id: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     name: {
         type: String
     },
@@ -29,6 +23,9 @@ const MiscSchema = new Schema({
     },
     source: {
         type: String
+    },
+    api_id: {
+        type: Number
     },
     sourceDetail: {
         type: String

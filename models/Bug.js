@@ -10,12 +10,6 @@ const BugSchema = new Schema({
     api_id: {
         type: Number
     },
-    user_id: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
     northernMonthAvail: {
         type: Array
     },
@@ -23,7 +17,7 @@ const BugSchema = new Schema({
         type: Array
     },
     timeAvail: {
-        type: Array
+        type: String
     },
     location:{
         type: String
