@@ -27,15 +27,15 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/acnh_db", {
 });
 
 // LOCAL DEV LINK
-app.use(cors({
-    origin: ["http://localhost:3000"]
-}));
+// app.use(cors({
+//     origin: ["http://localhost:3000"]
+// }));
 
 // DEPLOYED SITE LINK
-// app.use(cors({
-//     origin: ["https://awesome-acnh-react.herokuapp.com"],
-//     credentials: true,
-// }))
+app.use(cors({
+    origin: ["https://awesome-acnh-react.herokuapp.com"],
+    credentials: true,
+}))
 
 
 
@@ -622,46 +622,6 @@ app.post("/api/villagers/:userid", ({ body, params }, res) => {
     })   
 })
 
-// TODO: SAVE HOUSEWARES
-app.post("/api/villagers/:userid", ({ body, params }, res) => {
-    // console.log("body: ", body);
-    // console.log("params: ", params);
-    // CREATE OBJECT FOR DB
-    // ====================
-    const villagerObj = {
-  
-    }
-
-    // CHECK DB FOR EXISTING RECORD
-    // ============================
-    db.Villager.findOne({ api_id : body.id })
-    .then(dbResult => {
-        console.log(dbResult);
-        // IF NO RESULT IN DB
-        // CREATE DOCUMENT FIRST
-        // =====================
-        if(!dbResult){
-            db.Villager.create(housewareObj)
-            .then(data => {
-                console.log("data: ", data)
-                console.log("new houseware saved!")
-                // THEN ADD TO USER ASSOC ARRAY
-                // ============================
-                db.User.findOneAndUpdate({ _id: params.userid }, {$push: { villagers: data._id }})
-                .then(result => console.log(result))
-            })
-        } else {
-        // RESULT FOUND IN DATABASE 
-        // ========================
-            console.log("houseware already in db, added to user");
-            // SAVE RECORD _id TO USER ASSOC ARRAY
-            // ===================================
-            db.User.findOneAndUpdate({ _id: params.userid }, {$addToSet: { villagers: dbResult._id }})
-            .then(result => console.log(result))
-        }
-    })   
-})
-
 // TODO: SAVE WALLMOUNTEDS
 app.post("/api/fossils/:userid", ({ body, params }, res) => {
     // console.log("body: ", body);
@@ -697,46 +657,6 @@ app.post("/api/fossils/:userid", ({ body, params }, res) => {
             // SAVE RECORD _id TO USER ASSOC ARRAY
             // ===================================
             db.User.findOneAndUpdate({ _id: params.userid }, {$addToSet: { fossils: dbResult._id }})
-            .then(result => console.log(result))
-        }
-    })   
-})
-
-// TODO: SAVE HOUSEWARES
-app.post("/api/wallmounted/:userid", ({ body, params }, res) => {
-    // console.log("body: ", body);
-    // console.log("params: ", params);
-    // CREATE OBJECT FOR DB
-    // ====================
-    const wallMountedObj = {
-  
-    }
-
-    // CHECK DB FOR EXISTING RECORD
-    // ============================
-    db.WallMounted.findOne({ api_id : body.id })
-    .then(dbResult => {
-        console.log(dbResult);
-        // IF NO RESULT IN DB
-        // CREATE DOCUMENT FIRST
-        // =====================
-        if(!dbResult){
-            db.WallMounted.create(housewareObj)
-            .then(data => {
-                console.log("data: ", data)
-                console.log("new houseware saved!")
-                // THEN ADD TO USER ASSOC ARRAY
-                // ============================
-                db.User.findOneAndUpdate({ _id: params.userid }, {$push: { wallMounteds: data._id }})
-                .then(result => console.log(result))
-            })
-        } else {
-        // RESULT FOUND IN DATABASE 
-        // ========================
-            console.log("houseware already in db, added to user");
-            // SAVE RECORD _id TO USER ASSOC ARRAY
-            // ===================================
-            db.User.findOneAndUpdate({ _id: params.userid }, {$addToSet: { wallMounteds: dbResult._id }})
             .then(result => console.log(result))
         }
     })   
